@@ -18,6 +18,16 @@ Chi tiết số đo hiệu năng và danh sách test case xem tại: [BAO_CAO_TO
 - **Custom Hook `useDebounce`**: Hoãn tìm kiếm 300ms, chống lag khi nhập liệu.
 - **Code Splitting với `React.lazy` + `Suspense`**: Tách trang Thống kê (`StatsDashboard`) thành bundle độc lập chỉ 2.75 kB.
 
+### 📸 Ảnh Minh Chứng Tính Năng & Tối Ưu Hóa
+| So Sánh Hiệu Năng Trước / Sau | Redux Logger Middleware |
+| :---: | :---: |
+| ![Bảng so sánh](./docs/images/performance_comparison.png) | ![Redux Logger](./docs/images/redux_logger_console.png) |
+
+| ThemeContext - Chế độ Sáng (Light) | ThemeContext - Chế độ Tối (Dark) |
+| :---: | :---: |
+| ![Light Mode](./docs/images/theme_light_mode.png) | ![Dark Mode](./docs/images/theme_dark_mode.png) |
+
+
 ### 3. Kiểm Thử Tự Động (Testing)
 - Cấu hình Jest & React Testing Library hoàn toàn độc lập với tsconfig production.
 - **32 Test Cases** bao phủ đủ 4 nhóm kiểm thử:

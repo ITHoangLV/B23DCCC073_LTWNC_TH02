@@ -7,7 +7,9 @@
 
 ## I. BẢNG SO SÁNH HIỆU NĂNG TRƯỚC VÀ SAU KHI TỐI ƯU
 
-Các số đo được đo đạc thực tế trong môi trường trình duyệt Chrome / Playwright trên máy thực tế với tập dữ liệu kiểm thử tải cao (Stress test: 10.000 bài tập).
+Các số đo được đo đạc thực tế trong môi trường trình duyệt Chrome trên máy thực tế với tập dữ liệu kiểm thử tải cao (Stress test: 10.000 bài tập).
+
+### 1. Bảng số đo chi tiết
 
 | Tiêu chí đo đạc | Trước tối ưu (Baseline: `pre-optimization`) | Sau tối ưu (Hiện tại) | Mức cải thiện / Cơ chế tối ưu |
 | :--- | :--- | :--- | :--- |
@@ -20,9 +22,45 @@ Các số đo được đo đạc thực tế trong môi trường trình duyệ
 | **Chuyển đổi giao diện Sáng / Tối (Theme Toggle)** | Re-render lại toàn bộ component tree không kiểm soát | Chuyển đổi qua CSS variables `:root[data-theme]` + `ThemeContext` dùng `useMemo` | Không kích hoạt re-render mảng bài tập, chuyển theme tức thì (< 2ms) |
 | **Phân tách Bundle (Code Splitting)** | 1 file bundle duy nhất, tải trước toàn bộ code trang thống kê | `React.lazy` + `Suspense` cho `StatsDashboard` | Tách riêng chunk `StatsDashboard-CoMSLJYL.js` (**2.75 kB**), chỉ tải khi người dùng click tab Thống kê |
 
+### 2. Hình ảnh minh chứng đo đạc trước và sau tối ưu
+
+![Bảng so sánh hiệu năng trước và sau tối ưu](./docs/images/performance_comparison.png)
+
+#### Minh chứng danh sách 10.000 bài tập chạy mượt mà với Ảo hóa (`react-window`):
+![Danh sách 10.000 bài tập tải trong 38ms](./docs/images/stress_test_10k_items.png)
+
+#### Minh chứng tìm kiếm thời gian thực chống lag với `useDebounce`:
+![Tìm kiếm với useDebounce](./docs/images/search_debounce.png)
+
+#### Minh chứng Code Splitting trang Thống kê tải theo nhu cầu (`React.lazy`):
+![Trang thống kê tải lazy](./docs/images/stats_lazy_loaded.png)
+
 ---
 
-## II. DANH SÁCH TEST CASES (ĐỦ 4 LOẠI – TỔNG CỘNG 32 TEST CASES)
+## II. MINH CHỨNG THEME CONTEXT & REDUX LOGGER
+
+### 1. Minh chứng ThemeContext (Chuyển đổi Sáng / Tối)
+`ThemeContext` quản lý theme (`light` / `dark`), lưu vào `localStorage`, và áp dụng trực tiếp lên thẻ `:root[data-theme]`. Nhờ sử dụng biến CSS và bọc Context Value bằng `useMemo`, việc chuyển đổi theme diễn ra tức thì mà không làm re-render lại danh sách bài tập.
+
+#### Chế độ Sáng (Light Mode):
+![Chế độ Sáng - Light Mode](./docs/images/theme_light_mode.png)
+
+#### Chế độ Tối (Dark Mode):
+![Chế độ Tối - Dark Mode](./docs/images/theme_dark_mode.png)
+
+---
+
+### 2. Minh chứng Redux Logger Middleware
+`redux-logger` được cấu hình trong `store.ts` chỉ kích hoạt ở môi trường development (`import.meta.env.DEV`), tự động ghi lại trạng thái:
+- **`prev state`**: Trạng thái của Redux store trước khi action xảy ra.
+- **`action`**: Tên action và payload được dispatch (`fetchInitial`, `toggleComplete`, `loadStressTestData`, ...).
+- **`next state`**: Trạng thái mới của store sau khi reducer xử lý.
+
+![Redux Logger Middleware ghi log trên Chrome DevTools Console](./docs/images/redux_logger_console.png)
+
+---
+
+## III. DANH SÁCH TEST CASES (ĐỦ 4 LOẠI – TỔNG CỘNG 32 TEST CASES)
 
 Hệ thống đã triển khai đầy đủ **4 loại kiểm thử**, tổng cộng **32 test cases** (vượt xa chỉ tiêu tối thiểu 12 test cases) và tất cả đều **PASSED 100%**.
 
@@ -70,7 +108,7 @@ Hệ thống đã triển khai đầy đủ **4 loại kiểm thử**, tổng c�
 
 ---
 
-## III. BÁO CÁO TEST COVERAGE CHO THƯ MỤC `src/features/`
+## IV. BÁO CÁO TEST COVERAGE CHO THƯ MỤC `src/features/`
 
 ### 1. Cấu hình `coverageThreshold` trong `jest.config.ts`
 Quy tắc kiểm tra tự động tỷ lệ bao phủ code được cấu hình tại [jest.config.ts](file:///d:/MobileApp2026/BTTH1/BTH1/jest.config.ts):
